@@ -1,3 +1,8 @@
+![npm version](https://img.shields.io/npm/v/fluxorm.svg)
+![npm downloads](https://img.shields.io/npm/dw/fluxorm.svg)
+![license](https://img.shields.io/npm/l/fluxorm)
+![node](https://img.shields.io/node/v/fluxorm)
+
 # ⚡ FluxORM  
 A powerful modular Node.js backend framework — ORM + Query Builder + Router + Kernel + Validator + Express API server.
 
