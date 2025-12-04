@@ -118,14 +118,13 @@ module.exports = router.build();
         fs.writeFileSync(
             authFile,
 `// middleware/auth.js
-const { TokenManager } = require("fluxorm");
-
 module.exports = {
 
     // -------------------------------------------------------------------------
     // BEARER TOKEN alapú hitelesítés
     // -------------------------------------------------------------------------
     token: async (req, res, next) => {
+        const { TokenManager } = require("fluxorm");
         try {
             const header = req.headers.authorization;
 
@@ -155,6 +154,7 @@ module.exports = {
     // COOKIE alapú auth
     // -------------------------------------------------------------------------
     cookie: async (req, res, next) => {
+        const { TokenManager } = require("fluxorm");
         try {
             const token = req.cookies?.auth_token;
 
@@ -191,12 +191,11 @@ module.exports = {
             kernelFile,
 `const cors = require("../middleware/cors");
 const auth = require("../middleware/auth");
+const MiddlewareRegistry = require("fluxorm").MiddlewareRegistry;
 
 class Kernel {
     static middleware() {
-        return [
-            cors
-        ];
+        return [cors];
     }
 
     static routeMiddleware() {
@@ -205,9 +204,21 @@ class Kernel {
             "auth.cookie": auth.cookie
         };
     }
+
+    static apply(app) {
+        // globális middleware-ek
+        this.middleware().forEach(mw => app.use(mw));
+
+        // route middleware-ek regisztrálása
+        const routes = this.routeMiddleware();
+        for (const name in routes) {
+            MiddlewareRegistry.register(name, routes[name]);
+        }
+    }
 }
 
-module.exports = Kernel;`
+module.exports = Kernel;
+`
         );
         console.log("  ✔ Created: app/Kernel.js");
     }
@@ -219,8 +230,8 @@ module.exports = Kernel;`
     if (!fs.existsSync(indexFile)) {
         fs.writeFileSync(
             indexFile,
-`const { server } = require("fluxorm");
-server.start();`
+`const { Server } = require("fluxorm");
+Server.start();`
         );
         console.log("  ✔ Created: index.js");
     }

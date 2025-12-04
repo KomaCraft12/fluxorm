@@ -50,7 +50,7 @@ class Router {
     //   RESOURCE ROUTE (Laravel-szerű)
     // ─────────────────────────────────────────────
     resource(path, Controller) {
-        const base = "/" + path;
+        const base = path;
         this.get(base, Controller.index);
         this.post(base, Controller.store);
         this.get(base + "/:id", Controller.show);
@@ -105,7 +105,7 @@ class Router {
     //   CONTROLLER AUTO-MAP
     // ─────────────────────────────────────────────
     controller(basePath, Controller) {
-        const base = "/" + basePath;
+        const base = basePath;
 
         if (Controller.index)
             this.get(base, Controller.index);

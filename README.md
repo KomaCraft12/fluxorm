@@ -5,12 +5,12 @@
 
 ---
 
-## 📢 Latest changes (v1.0.2 – 2025-12-04)
+## 📢 Latest changes (v1.0.3 – 2025-12-04)
 
-- Extended SchemaBuilder with chainable methods (`defaultTo`, `notNullable`, `unique`, etc.)
-- Added support for `decimal`, `date`, `datetime`, `timestamp` with `onUpdate`
-- Foreign key constraints with `onDelete` and `onUpdate`
-- `alterTable()` support for schema migrations
+- Fixed circular dependency between `TokenManager` and `TokenModel` that caused `TokenManager` to be `undefined` when imported from `fluxorm`
+- Updated `TokenModel` to import `Model` directly (`../Model`) instead of via the main `index.js`, eliminating require loops
+- Stabilized `index.js` exports so `TokenManager` is consistently available through `require("fluxorm")`
+- Improved middleware compatibility: `auth.js` can now safely use `TokenManager.getUserByToken()` without crashing during server startup
 
 ---
 

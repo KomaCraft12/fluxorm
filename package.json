@@ -1,6 +1,6 @@
 {
   "name": "fluxorm",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "FluxORM is a javascript-based ORM system built on Laravel.",
   "main": "index.js",
   "type": "commonjs",

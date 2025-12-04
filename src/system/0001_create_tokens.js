@@ -1,17 +1,29 @@
 module.exports = {
-    up: async (db) => {
-        await db.query(`
-            CREATE TABLE personal_access_tokens (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT UNSIGNED NOT NULL,
-                token VARCHAR(64) NOT NULL UNIQUE,
-                name VARCHAR(255) NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        `);
-    },
+  up: async (db) => {
+    await db.schema.createTable("personal_access_tokens", table => {
+      table.increments("id");
 
-    down: async (db) => {
-        await db.query(`DROP TABLE IF EXISTS personal_access_tokens`);
-    }
-}
+      table.integer("user_id")
+        .unsigned()
+        .notNullable()
+        .build();
+
+      table.string("token", 64)
+        .notNullable()
+        .unique()
+        .build();
+
+      table.string("name", 255)
+        .nullable()
+        .build();
+
+      table.timestamp("created_at")
+        .defaultTo("CURRENT_TIMESTAMP")
+        .build();
+    });
+  },
+
+  down: async (db) => {
+    await db.schema.dropTable("personal_access_tokens");
+  }
+};

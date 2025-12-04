@@ -18,7 +18,6 @@ module.exports = {
     Server: require("./src/server/Server"),
 
     // --- Auth & Tokens ---
-    TokenManager: require("./src/system/TokenManager"),
-    TokenModel: require("./src/system/TokenModel")
+    TokenManager: require("./src/system/TokenManager")
 
 };
