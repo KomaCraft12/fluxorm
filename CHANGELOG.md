@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2025-12-05
+### Fixed
+- Corrected database connection import: use `connection.get()` instead of destructuring `{ db }`
+- Stabilized Model and Validator to properly access DB pool
+
+### Added
+- Model.insert(data): static shortcut for creating and saving a new record
+- Model.create(data): alias for insert(), Laravel-style convenience
+
+---
+
 ## [1.0.3] - 2025-12-04
 ### Fixed
 - Resolved circular dependency between `TokenManager` and `TokenModel` that caused `TokenManager` to be `undefined` when imported from `fluxorm`.

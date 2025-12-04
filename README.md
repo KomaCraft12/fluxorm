@@ -5,12 +5,12 @@
 
 ---
 
-## 📢 Latest changes (v1.0.3 – 2025-12-04)
+## 📢 Latest changes (v1.0.4 – 2025-12-05)
 
-- Fixed circular dependency between `TokenManager` and `TokenModel` that caused `TokenManager` to be `undefined` when imported from `fluxorm`
-- Updated `TokenModel` to import `Model` directly (`../Model`) instead of via the main `index.js`, eliminating require loops
-- Stabilized `index.js` exports so `TokenManager` is consistently available through `require("fluxorm")`
-- Improved middleware compatibility: `auth.js` can now safely use `TokenManager.getUserByToken()` without crashing during server startup
+- Fixed database connection import: replaced destructuring `{ db }` with `connection.get()` to prevent `undefined` errors in `Model` and `Validator`
+- Stabilized `User.save()` and DB‑aware validation rules (`unique`, `exists`) by correctly accessing the pool
+- Added **Model.insert(data)** static shortcut for creating and saving new records
+- Added **Model.create(data)** alias for `insert()`, providing Laravel‑style API convenience
 
 ---
 

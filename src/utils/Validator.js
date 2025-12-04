@@ -1,4 +1,4 @@
-const { db } = require("../database/connection");
+const connection = require("../database/connection");
 
 class Validator {
 
@@ -97,7 +97,7 @@ class Validator {
         if (!value) return;
 
         const [table, column] = param.split(",");
-        const pool = db.get();
+        const pool = connection.get();
 
         const [rows] = await pool.query(
             `SELECT COUNT(*) as c FROM ${table} WHERE ${column}=?`,
@@ -116,7 +116,7 @@ class Validator {
         if (!value) return;
 
         const [table, column] = param.split(",");
-        const pool = db.get();
+        const pool = connection.get();
 
         const [rows] = await pool.query(
             `SELECT COUNT(*) as c FROM ${table} WHERE ${column}=?`,

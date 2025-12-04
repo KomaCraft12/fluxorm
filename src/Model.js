@@ -1,5 +1,5 @@
 const QueryBuilder = require("./QueryBuilder");
-const { db } = require("./database/connection");
+const connection = require("./database/connection");
 const { HasOne, HasMany, BelongsTo, BelongsToMany } = require("./relations");
 
 class Model {
@@ -96,7 +96,7 @@ class Model {
     //  SAVE() (INSERT / UPDATE)
     // ───────────────────────────
     async save() {
-        const pool = db.get();
+        const pool = connection.get();
         const pk = this.constructor.primaryKey;
 
         // UPDATE
@@ -127,10 +127,26 @@ class Model {
     }
 
     // ───────────────────────────
+    //  INSERT()
+    // ───────────────────────────
+    static async insert(data) {
+        const model = new this(data);
+        await model.save();
+        return model;
+    }
+
+    // ───────────────────────────
+    //  CREATE()
+    // ───────────────────────────
+    static async create(data) {
+        return this.insert(data);
+    }
+
+    // ───────────────────────────
     //  DELETE()
     // ───────────────────────────
     async delete() {
-        const pool = db.get();
+        const pool = connection.get();
         const pk = this.constructor.primaryKey;
 
         const sql = `DELETE FROM ${this.constructor.table}
