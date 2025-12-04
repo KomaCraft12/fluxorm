@@ -1,0 +1,47 @@
+# -------------------------
+# Node.js & NPM
+# -------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+logs.txt
+debug.log
+error.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / cache
+dist/
+build/
+.cache/
+.temp/
+
+# Editor folders
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+
+# TypeScript (ha később TS-re mész)
+*.tsbuildinfo
+
+# Generated folders
+public/
+storage/
+
+# Optional: npm publish exclude override
+.npmignore
