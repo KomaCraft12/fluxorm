@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = function () {
-    console.log("\n🚀 Initializing KOMA ORM project...\n");
+    console.log("\n🚀 Initializing FluxORM project...\n");
 
     const root = process.cwd();
 
@@ -37,7 +37,7 @@ module.exports = function () {
     if (!fs.existsSync(envPath)) {
         fs.writeFileSync(
             envPath,
-            `DB_HOST=localhost
+`DB_HOST=localhost
 DB_USER=root
 DB_PASS=
 DB_NAME=test
@@ -53,7 +53,7 @@ PORT=3000`
     if (!fs.existsSync(configPath)) {
         fs.writeFileSync(
             configPath,
-            `module.exports = {
+`module.exports = {
     database: {
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -72,7 +72,7 @@ PORT=3000`
     if (!fs.existsSync(routesFile)) {
         fs.writeFileSync(
             routesFile,
-            `const { Router } = require("querybuilder");
+`const { Router } = require("fluxorm");
 
 const router = new Router();
 
@@ -100,7 +100,7 @@ module.exports = router.build();
     if (!fs.existsSync(corsFile)) {
         fs.writeFileSync(
             corsFile,
-            `module.exports = function(req, res, next) {
+`module.exports = function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -117,58 +117,67 @@ module.exports = router.build();
     if (!fs.existsSync(authFile)) {
         fs.writeFileSync(
             authFile,
-            `module.exports = {
+`// middleware/auth.js
+const { TokenManager } = require("fluxorm");
 
+module.exports = {
+
+    // -------------------------------------------------------------------------
+    // BEARER TOKEN alapú hitelesítés
+    // -------------------------------------------------------------------------
     token: async (req, res, next) => {
         try {
             const header = req.headers.authorization;
 
-            if (!header || !header.startsWith("Bearer "))
+            if (!header || !header.startsWith("Bearer ")) {
                 return res.status(401).json({ message: "Missing or invalid token" });
+            }
 
             const token = header.split(" ")[1];
 
-            // ❗ LAZY LOAD HERE → elkerüli a ciklikus require-t
-            const User = require(process.cwd() + "/models/User");
+            // FluxORM TokenManager → User vagy null
+            const user = await TokenManager.getUserByToken(token);
 
-            const user = await User.where("api_token", token).first();
-            if (!user)
+            if (!user) {
                 return res.status(401).json({ message: "Invalid token" });
+            }
 
             req.user = user;
             next();
 
         } catch (err) {
             console.error("auth.token error:", err);
-            res.status(500).json({ message: "Auth error" });
+            return res.status(500).json({ message: "Auth error" });
         }
     },
 
-
+    // -------------------------------------------------------------------------
+    // COOKIE alapú auth
+    // -------------------------------------------------------------------------
     cookie: async (req, res, next) => {
         try {
             const token = req.cookies?.auth_token;
 
-            if (!token)
+            if (!token) {
                 return res.status(401).json({ message: "Missing auth cookie" });
+            }
 
-            // ❗ LAZY LOAD HERE ALSO
-            const User = require(process.cwd() + "/models/User");
+            const user = await TokenManager.getUserByToken(token);
 
-            const user = await User.where("api_token", token).first();
-            if (!user)
+            if (!user) {
                 return res.status(401).json({ message: "Invalid auth cookie" });
+            }
 
             req.user = user;
             next();
 
         } catch (err) {
             console.error("auth.cookie error:", err);
-            res.status(500).json({ message: "Auth error" });
+            return res.status(500).json({ message: "Auth error" });
         }
     }
-
-};`
+};
+`
         );
         console.log("  ✔ Created: middleware/auth.js");
     }
@@ -180,14 +189,13 @@ module.exports = router.build();
     if (!fs.existsSync(kernelFile)) {
         fs.writeFileSync(
             kernelFile,
-            `const cors = require("../middleware/cors");
+`const cors = require("../middleware/cors");
 const auth = require("../middleware/auth");
 
 class Kernel {
     static middleware() {
         return [
             cors
-            // később: rateLimit, throttle, logging, session...
         ];
     }
 
@@ -205,13 +213,13 @@ module.exports = Kernel;`
     }
 
     // ─────────────────────────────────────────────
-    // index.js → only calls server.start()
+    // index.js – FluxORM server indítása
     // ─────────────────────────────────────────────
     const indexFile = path.join(root, "index.js");
     if (!fs.existsSync(indexFile)) {
         fs.writeFileSync(
             indexFile,
-            `const { server } = require("querybuilder");
+`const { server } = require("fluxorm");
 server.start();`
         );
         console.log("  ✔ Created: index.js");
@@ -220,9 +228,17 @@ server.start();`
     // README.md
     const readme = path.join(root, "README.md");
     if (!fs.existsSync(readme)) {
-        fs.writeFileSync(readme, "# KOMA ORM Project\nGenerated by \`orm init\`.");
+        fs.writeFileSync(readme, "# FluxORM Project\nGenerated by \`orm init\`.");
         console.log("  ✔ Created: README.md");
     }
 
     console.log("\n✨ Project initialized!\n");
+
+    // copy system/00001_create_tokes.js
+    // --> migrationa/
+    const migSrc = path.join(__dirname, "..", "system", "0001_create_tokens.js");
+    const migDestDir = path.join(root, "migrations");
+    const migDest = path.join(migDestDir, "00001_create_tokens.js");
+    fs.copyFileSync(migSrc, migDest);
+    console.log("  ✔ Copied: migrations/00001_create_tokens.js");
 };

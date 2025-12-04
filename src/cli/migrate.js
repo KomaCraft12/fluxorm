@@ -7,9 +7,9 @@ module.exports = async function(rollback = false) {
     // 1. ENV-ből töltjük a DB adatokat
     const config = {
         host: process.env.DB_HOST,
-        user: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DATABASE,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
     };
 
     if (!config.host) {

@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = function(name) {
     const content = `
-const { Model } = require("querybuilder");
+const { Model } = require("fluxorm");
 
 class ${name} extends Model {
     static get table() {
