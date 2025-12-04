@@ -2,24 +2,33 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = function(name) {
-    const timestamp = Date.now();
+    // 1. Timestamp emberi olvasható formátumban
+    const now = new Date();
+    const timestamp = now.toISOString()
+        .replace(/[-:TZ.]/g, "")
+        .slice(0, 14); // YYYYMMDDHHMMSS
+
     const filename = `${timestamp}_${name}.js`;
 
-    const content = `
-module.exports = {
-    up: async (db) => {
-        // CREATE TABLE
-    },
+    // 2. Migration sablon, tábla névvel
+    const content = `module.exports = {
+  up: async (db) => {
+    await db.schema.createTable("${name}", table => {
+      // oszlopok ide
+    });
+  },
 
-    down: async (db) => {
-        // DROP TABLE
-    }
-}
+  down: async (db) => {
+    await db.schema.dropTableIfExists("${name}");
+  }
+};
 `;
 
-    const filePath = path.join(process.cwd(), "migrations", filename);
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    fs.writeFileSync(filePath, content.trim());
+    // 3. Fájl létrehozás
+    const folder = path.join(process.cwd(), "migrations");
+    fs.mkdirSync(folder, { recursive: true });
+    const filePath = path.join(folder, filename);
+    fs.writeFileSync(filePath, content, { encoding: "utf8" });
 
-    console.log("Migration created:", `migrations/${filename}`);
+    console.log("✔ Migration created:", path.relative(process.cwd(), filePath));
 };

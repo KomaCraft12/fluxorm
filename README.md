@@ -3,6 +3,17 @@
 ![license](https://img.shields.io/npm/l/fluxorm)
 ![node](https://img.shields.io/node/v/fluxorm)
 
+---
+
+## 📢 Latest changes (v1.0.2 – 2025-12-04)
+
+- Extended SchemaBuilder with chainable methods (`defaultTo`, `notNullable`, `unique`, etc.)
+- Added support for `decimal`, `date`, `datetime`, `timestamp` with `onUpdate`
+- Foreign key constraints with `onDelete` and `onUpdate`
+- `alterTable()` support for schema migrations
+
+---
+
 # ⚡ FluxORM  
 A powerful modular Node.js backend framework — ORM + Query Builder + Router + Kernel + Validator + Express API server.
 
@@ -13,18 +24,18 @@ FluxORM = **Laravel feeling + Express speed + ultra-clean architecture**.
 ## 🚀 Features
 
 ### 🔹 ORM + Query Builder
-- Model alapú ORM
+- Model based ORM
 - Eager loading: `with()`, nested: `posts.comments`
 - Relációk:
   - hasOne
   - hasMany
   - belongsTo
   - belongsToMany
-- Query Builder funkciók:
+- Query Builder functions:
   - where, orWhere, whereIn, whereNull, whereBetween
   - orderBy, limit, offset
   - raw, whereRaw, joinRaw, havingRaw
-- Model opciók:
+- Model opcions:
   - save()
   - delete()
   - find()
@@ -32,7 +43,7 @@ FluxORM = **Laravel feeling + Express speed + ultra-clean architecture**.
 
 ---
 
-## 🔹 Router – Laravel stílus
+## 🔹 Router – Laravel style
 - router.get(), post(), put(), delete()
 - router.controller("users", Controller)
 - Route group prefix + middleware:
@@ -45,7 +56,7 @@ router.group({ prefix: "admin", middleware: ["token"] }, r => {
 ---
 
 ## 🔹 Middleware Kernel
-Globális middleware kezelés:
+Glabol middleware management:
 
 ```
 app/Kernel.js
@@ -68,7 +79,7 @@ module.exports = Kernel;
 ---
 
 ## 🔹 Auth Middleware
-Token vagy Cookie alapú autentikáció:
+Token or Cookie based authentication:
 
 - auth.token → Bearer token
 - auth.cookie → Cookie token
@@ -81,8 +92,8 @@ router.group({ prefix: "admin", middleware: ["token"] }, r => {
 
 ---
 
-## 🔹 Validator – Laravel-stílus
-Támogatott szabályok:
+## 🔹 Validator – Laravel-style
+Supported rules:
 - required
 - email
 - min, max
@@ -92,7 +103,7 @@ Támogatott szabályok:
 - exists:roles,id
 - date, before, after
 
-Használat:
+Use:
 ```js
 await Validator.validate(req.body, {
     email: "required|email|unique:users,email",
@@ -102,12 +113,12 @@ await Validator.validate(req.body, {
 
 ---
 
-## 🔹 CLI Parancsok
+## 🔹 CLI Commands
 
 ```
 orm init                 # projekt skeleton
-orm serve                # API indítás
-orm serve --dev          # nodemon dev mód
+orm serve                # API run
+orm serve --dev          # nodemon dev mode
 orm make:model User
 orm make:controller UserController
 orm make:migration create_users_table
@@ -119,7 +130,7 @@ orm seed
 
 ---
 
-# 📁 Projekt Struktúra
+# 📁 Project Structure
 
 ```
 /project
@@ -147,7 +158,7 @@ orm seed
 
 ---
 
-# 🛠 Példák
+# 🛠 Examples
 
 ## 1️⃣ Model
 ```js
@@ -208,13 +219,31 @@ module.exports = router.build();
 
 ---
 
+## 4️⃣ Migrations
+```js
+module.exports = {
+  up: async (db) => {
+    await db.schema.createTable("users", table => {
+      table.increments("id");
+      table.string("name").notNullable().build();
+      table.boolean("active").defaultTo(true);
+      table.timestamp("created_at").defaultTo(db.fn.now());
+    });
+  },
+
+  down: async (db) => {
+    await db.schema.dropTableIfExists("users");
+  }
+};
+```
+
 # 🚀 Start API
 
 ```
 orm serve
 ```
 
-Dev módban:
+In dev mode:
 
 ```
 orm serve --dev
@@ -252,4 +281,3 @@ orm seed
 
 # ❤️ Made by Janó  
 FluxORM official framework.
-

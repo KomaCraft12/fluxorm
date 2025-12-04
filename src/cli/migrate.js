@@ -29,9 +29,9 @@ module.exports = async function(rollback = false) {
         const migration = require(path.join(folder, file));
 
         if (!rollback) {
-            await migration.up(db.get());
+            await migration.up(db);
         } else {
-            await migration.down(db.get());
+            await migration.down(db);
         }
     }
 
